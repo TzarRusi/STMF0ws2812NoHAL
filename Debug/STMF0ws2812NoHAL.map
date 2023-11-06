@@ -623,15 +623,15 @@ LOAD C:/ST/STM32CubeIDE_1.13.2/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
                 0x0000000008000314       0xdc ./Src/main.o
  .text.SysTick_Config
                 0x00000000080003f0       0x48 ./Src/main.o
- .text.SysTick_Handler
-                0x0000000008000438       0x18 ./Src/main.o
-                0x0000000008000438                SysTick_Handler
  .text.set_led_color
-                0x0000000008000450      0x13c ./Src/main.o
-                0x0000000008000450                set_led_color
+                0x0000000008000438      0x13c ./Src/main.o
+                0x0000000008000438                set_led_color
  .text.update_ws2812
-                0x000000000800058c       0x50 ./Src/main.o
-                0x000000000800058c                update_ws2812
+                0x0000000008000574       0x50 ./Src/main.o
+                0x0000000008000574                update_ws2812
+ .text.SysTick_Handler
+                0x00000000080005c4       0x18 ./Src/main.o
+                0x00000000080005c4                SysTick_Handler
  .text.main     0x00000000080005dc      0x204 ./Src/main.o
                 0x00000000080005dc                main
  .text.Reset_Handler
@@ -769,7 +769,7 @@ LOAD C:/ST/STM32CubeIDE_1.13.2/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
  .igot.plt      0x0000000020000004        0x0 C:/ST/STM32CubeIDE_1.13.2/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.11.3.rel1.win32_1.1.1.202309131626/tools/bin/../lib/gcc/arm-none-eabi/11.3.1/thumb/v6-m/nofp/crtbegin.o
                 0x0000000020000004                . = ALIGN (0x4)
 
-.bss            0x0000000020000004       0x6c load address 0x00000000080008b0
+.bss            0x0000000020000004       0xe4 load address 0x00000000080008b0
                 0x0000000020000004                _sbss = .
                 0x0000000020000004                __bss_start__ = _sbss
  *(.bss)
@@ -778,24 +778,24 @@ LOAD C:/ST/STM32CubeIDE_1.13.2/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
  .bss.time      0x0000000020000020        0x4 ./Src/main.o
                 0x0000000020000020                time
  .bss.pwm_values
-                0x0000000020000024       0x49 ./Src/main.o
+                0x0000000020000024       0xc1 ./Src/main.o
                 0x0000000020000024                pwm_values
  *(COMMON)
-                0x0000000020000070                . = ALIGN (0x4)
- *fill*         0x000000002000006d        0x3 
-                0x0000000020000070                _ebss = .
-                0x0000000020000070                __bss_end__ = _ebss
+                0x00000000200000e8                . = ALIGN (0x4)
+ *fill*         0x00000000200000e5        0x3 
+                0x00000000200000e8                _ebss = .
+                0x00000000200000e8                __bss_end__ = _ebss
 
 ._user_heap_stack
-                0x0000000020000070      0x600 load address 0x00000000080008b0
-                0x0000000020000070                . = ALIGN (0x8)
+                0x00000000200000e8      0x600 load address 0x00000000080008b0
+                0x00000000200000e8                . = ALIGN (0x8)
                 [!provide]                        PROVIDE (end = .)
-                0x0000000020000070                PROVIDE (_end = .)
-                0x0000000020000270                . = (. + _Min_Heap_Size)
- *fill*         0x0000000020000070      0x200 
-                0x0000000020000670                . = (. + _Min_Stack_Size)
- *fill*         0x0000000020000270      0x400 
-                0x0000000020000670                . = ALIGN (0x8)
+                0x00000000200000e8                PROVIDE (_end = .)
+                0x00000000200002e8                . = (. + _Min_Heap_Size)
+ *fill*         0x00000000200000e8      0x200 
+                0x00000000200006e8                . = (. + _Min_Stack_Size)
+ *fill*         0x00000000200002e8      0x400 
+                0x00000000200006e8                . = ALIGN (0x8)
 
 /DISCARD/
  libc.a(*)
@@ -862,7 +862,7 @@ LOAD C:/ST/STM32CubeIDE_1.13.2/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
  .debug_rnglists
                 0x000000000000004e       0x19 ./Startup/startup_stm32f070cbtx.o
 
-.debug_macro    0x0000000000000000     0x8be7
+.debug_macro    0x0000000000000000     0x8bed
  .debug_macro   0x0000000000000000       0xcc ./CMSIS/Src/system_stm32f0xx.o
  .debug_macro   0x00000000000000cc      0xa84 ./CMSIS/Src/system_stm32f0xx.o
  .debug_macro   0x0000000000000b50       0x2e ./CMSIS/Src/system_stm32f0xx.o
@@ -879,19 +879,19 @@ LOAD C:/ST/STM32CubeIDE_1.13.2/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
  .debug_macro   0x00000000000010da      0x391 ./CMSIS/Src/system_stm32f0xx.o
  .debug_macro   0x000000000000146b     0x765c ./CMSIS/Src/system_stm32f0xx.o
  .debug_macro   0x0000000000008ac7       0x66 ./CMSIS/Src/system_stm32f0xx.o
- .debug_macro   0x0000000000008b2d       0xba ./Src/main.o
+ .debug_macro   0x0000000000008b2d       0xc0 ./Src/main.o
 
-.debug_line     0x0000000000000000      0xd04
+.debug_line     0x0000000000000000      0xd06
  .debug_line    0x0000000000000000      0x548 ./CMSIS/Src/system_stm32f0xx.o
- .debug_line    0x0000000000000548      0x741 ./Src/main.o
- .debug_line    0x0000000000000c89       0x7b ./Startup/startup_stm32f070cbtx.o
+ .debug_line    0x0000000000000548      0x743 ./Src/main.o
+ .debug_line    0x0000000000000c8b       0x7b ./Startup/startup_stm32f070cbtx.o
 
-.debug_str      0x0000000000000000    0x2ee85
+.debug_str      0x0000000000000000    0x2ee8c
  .debug_str     0x0000000000000000    0x2eb73 ./CMSIS/Src/system_stm32f0xx.o
                                       0x2ecdf (size before relaxing)
- .debug_str     0x000000000002eb73      0x2e3 ./Src/main.o
-                                      0x2ef9e (size before relaxing)
- .debug_str     0x000000000002ee56       0x2f ./Startup/startup_stm32f070cbtx.o
+ .debug_str     0x000000000002eb73      0x2ea ./Src/main.o
+                                      0x2efa5 (size before relaxing)
+ .debug_str     0x000000000002ee5d       0x2f ./Startup/startup_stm32f070cbtx.o
                                          0x62 (size before relaxing)
 
 .debug_frame    0x0000000000000000      0x160

@@ -1,23 +1,22 @@
 #include "stm32f0xx.h"
 
-volatile uint32_t time = 0;
-uint8_t pwm_values[24 * 3 + 1];
+//количество светодиодов
+#define leds 8
 
-//функция,включающая прерывания позволяющая делать простые задержки
-void SysTick_Handler(void)
-{
-	time++;
-}
+volatile uint32_t time = 0;
+uint8_t pwm_values[24 * leds + 1];
+
+
 
 void set_led_color(uint8_t led, uint8_t r, uint8_t g, uint8_t b)
 {
 	uint8_t i;
 	for (i = 0; i < 8; i++)
-		pwm_values[24*led + i] = ((r >> (7 - i)) & 1)? 36: 12;
+		pwm_values[24*led + i] = ((r >> (7 - i)) & 1)? 36: 13;
 	for (i = 0; i < 8; i++)
-		pwm_values[24*led + 8 + i] = ((g >> (7 - i)) & 1)? 36: 12;
+		pwm_values[24*led + 8 + i] = ((g >> (7 - i)) & 1)? 36: 13;
 	for (i=0; i < 8; i++)
-		pwm_values[24*led + 16 + i] = ((b >> (7 - i)) & 1)? 36: 12;
+		pwm_values[24*led + 16 + i] = ((b >> (7 - i)) & 1)? 36: 13;
 
 	pwm_values[sizeof(pwm_values) / sizeof(pwm_values[0]) - 1] = 0;
 }
@@ -39,13 +38,17 @@ void update_ws2812(void)
 }
 
 
-
+//функция,включающая прерывания позволяющая делать простые задержки
+void SysTick_Handler(void)
+{
+	time++;
+}
 
 int main(void)
 {
 	SystemInit();
 
-	//x12
+	//x12 множитель для 48MHz
 	RCC->CFGR &= ~(RCC_CFGR_PLLMUL_2 | RCC_CFGR_PLLMUL_0);
 	RCC->CFGR |= RCC_CFGR_PLLMUL_3 | RCC_CFGR_PLLMUL_1;
 	//Turn PLL on
@@ -53,7 +56,7 @@ int main(void)
 	// Wait for it
 	while(!(RCC->CR & RCC_CR_PLLRDY));
 
-	// Select PPL as main clock
+	// Select PLL as main clock
 	RCC->CFGR &= ~RCC_CFGR_SW_0;
 	RCC->CFGR |= RCC_CFGR_SW_1;
 
@@ -66,10 +69,9 @@ int main(void)
 	TIM3->PSC = 0;
 	//Auto reload register - таймер считает до 100
 	TIM3->ARR = 48;
-	//На линии ос1реф записываем биты для включения шим на первом канале
-
+	//На линии ос1реф, из которой сигнал идет на 1 канал записываем биты для включения шим на первом канале
 	TIM3->CCMR1 |= TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1PE;
-	// 1 КАНАЛ
+	//Turn on 1 channel
 	TIM3->CCER |= TIM_CCER_CC1E;
 	// Enable DMA for CC1
 	TIM3->DIER |= TIM_DIER_CC1DE;

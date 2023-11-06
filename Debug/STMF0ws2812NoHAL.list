@@ -21,9 +21,9 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, ALLOC, LOAD, DATA
   8 .data         00000004  20000000  080008ac  00020000  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  9 .bss          0000006c  20000004  080008b0  00020004  2**2
+  9 .bss          000000e4  20000004  080008b0  00020004  2**2
                   ALLOC
- 10 ._user_heap_stack 00000600  20000070  080008b0  00020070  2**0
+ 10 ._user_heap_stack 00000600  200000e8  080008b0  000200e8  2**0
                   ALLOC
  11 .ARM.attributes 00000028  00000000  00000000  00020004  2**0
                   CONTENTS, READONLY
@@ -37,15 +37,15 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  16 .debug_rnglists 00000067  00000000  00000000  00020e40  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_macro  00008be7  00000000  00000000  00020ea7  2**0
+ 17 .debug_macro  00008bed  00000000  00000000  00020ea7  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_line   00000d04  00000000  00000000  00029a8e  2**0
+ 18 .debug_line   00000d06  00000000  00000000  00029a94  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .debug_str    0002ee85  00000000  00000000  0002a792  2**0
+ 19 .debug_str    0002ee8c  00000000  00000000  0002a79a  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 20 .debug_frame  00000160  00000000  00000000  00059618  2**2
+ 20 .debug_frame  00000160  00000000  00000000  00059628  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000056  00000000  00000000  00059778  2**0
+ 21 .debug_line_str 00000056  00000000  00000000  00059788  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -595,259 +595,258 @@ __STATIC_INLINE uint32_t SysTick_Config(uint32_t ticks)
  8000432:	46c0      	nop			; (mov r8, r8)
  8000434:	e000e010 	.word	0xe000e010
 
-08000438 <SysTick_Handler>:
-volatile uint32_t time = 0;
-uint8_t pwm_values[24 * 3 + 1];
+08000438 <set_led_color>:
+uint8_t pwm_values[24 * leds + 1];
+
+
+
+void set_led_color(uint8_t led, uint8_t r, uint8_t g, uint8_t b)
+{
+ 8000438:	b5b0      	push	{r4, r5, r7, lr}
+ 800043a:	b084      	sub	sp, #16
+ 800043c:	af00      	add	r7, sp, #0
+ 800043e:	0005      	movs	r5, r0
+ 8000440:	000c      	movs	r4, r1
+ 8000442:	0010      	movs	r0, r2
+ 8000444:	0019      	movs	r1, r3
+ 8000446:	1dfb      	adds	r3, r7, #7
+ 8000448:	1c2a      	adds	r2, r5, #0
+ 800044a:	701a      	strb	r2, [r3, #0]
+ 800044c:	1dbb      	adds	r3, r7, #6
+ 800044e:	1c22      	adds	r2, r4, #0
+ 8000450:	701a      	strb	r2, [r3, #0]
+ 8000452:	1d7b      	adds	r3, r7, #5
+ 8000454:	1c02      	adds	r2, r0, #0
+ 8000456:	701a      	strb	r2, [r3, #0]
+ 8000458:	1d3b      	adds	r3, r7, #4
+ 800045a:	1c0a      	adds	r2, r1, #0
+ 800045c:	701a      	strb	r2, [r3, #0]
+	uint8_t i;
+	for (i = 0; i < 8; i++)
+ 800045e:	230f      	movs	r3, #15
+ 8000460:	18fb      	adds	r3, r7, r3
+ 8000462:	2200      	movs	r2, #0
+ 8000464:	701a      	strb	r2, [r3, #0]
+ 8000466:	e020      	b.n	80004aa <set_led_color+0x72>
+		pwm_values[24*led + i] = ((r >> (7 - i)) & 1)? 36: 13;
+ 8000468:	1dbb      	adds	r3, r7, #6
+ 800046a:	781a      	ldrb	r2, [r3, #0]
+ 800046c:	230f      	movs	r3, #15
+ 800046e:	18fb      	adds	r3, r7, r3
+ 8000470:	781b      	ldrb	r3, [r3, #0]
+ 8000472:	2107      	movs	r1, #7
+ 8000474:	1acb      	subs	r3, r1, r3
+ 8000476:	411a      	asrs	r2, r3
+ 8000478:	0013      	movs	r3, r2
+ 800047a:	2201      	movs	r2, #1
+ 800047c:	4013      	ands	r3, r2
+ 800047e:	d001      	beq.n	8000484 <set_led_color+0x4c>
+ 8000480:	2124      	movs	r1, #36	; 0x24
+ 8000482:	e000      	b.n	8000486 <set_led_color+0x4e>
+ 8000484:	210d      	movs	r1, #13
+ 8000486:	1dfb      	adds	r3, r7, #7
+ 8000488:	781a      	ldrb	r2, [r3, #0]
+ 800048a:	0013      	movs	r3, r2
+ 800048c:	005b      	lsls	r3, r3, #1
+ 800048e:	189b      	adds	r3, r3, r2
+ 8000490:	00db      	lsls	r3, r3, #3
+ 8000492:	001a      	movs	r2, r3
+ 8000494:	200f      	movs	r0, #15
+ 8000496:	183b      	adds	r3, r7, r0
+ 8000498:	781b      	ldrb	r3, [r3, #0]
+ 800049a:	18d3      	adds	r3, r2, r3
+ 800049c:	4a34      	ldr	r2, [pc, #208]	; (8000570 <set_led_color+0x138>)
+ 800049e:	54d1      	strb	r1, [r2, r3]
+	for (i = 0; i < 8; i++)
+ 80004a0:	183b      	adds	r3, r7, r0
+ 80004a2:	781a      	ldrb	r2, [r3, #0]
+ 80004a4:	183b      	adds	r3, r7, r0
+ 80004a6:	3201      	adds	r2, #1
+ 80004a8:	701a      	strb	r2, [r3, #0]
+ 80004aa:	220f      	movs	r2, #15
+ 80004ac:	18bb      	adds	r3, r7, r2
+ 80004ae:	781b      	ldrb	r3, [r3, #0]
+ 80004b0:	2b07      	cmp	r3, #7
+ 80004b2:	d9d9      	bls.n	8000468 <set_led_color+0x30>
+	for (i = 0; i < 8; i++)
+ 80004b4:	18bb      	adds	r3, r7, r2
+ 80004b6:	2200      	movs	r2, #0
+ 80004b8:	701a      	strb	r2, [r3, #0]
+ 80004ba:	e021      	b.n	8000500 <set_led_color+0xc8>
+		pwm_values[24*led + 8 + i] = ((g >> (7 - i)) & 1)? 36: 13;
+ 80004bc:	1d7b      	adds	r3, r7, #5
+ 80004be:	781a      	ldrb	r2, [r3, #0]
+ 80004c0:	230f      	movs	r3, #15
+ 80004c2:	18fb      	adds	r3, r7, r3
+ 80004c4:	781b      	ldrb	r3, [r3, #0]
+ 80004c6:	2107      	movs	r1, #7
+ 80004c8:	1acb      	subs	r3, r1, r3
+ 80004ca:	411a      	asrs	r2, r3
+ 80004cc:	0013      	movs	r3, r2
+ 80004ce:	2201      	movs	r2, #1
+ 80004d0:	4013      	ands	r3, r2
+ 80004d2:	d001      	beq.n	80004d8 <set_led_color+0xa0>
+ 80004d4:	2124      	movs	r1, #36	; 0x24
+ 80004d6:	e000      	b.n	80004da <set_led_color+0xa2>
+ 80004d8:	210d      	movs	r1, #13
+ 80004da:	1dfb      	adds	r3, r7, #7
+ 80004dc:	781a      	ldrb	r2, [r3, #0]
+ 80004de:	0013      	movs	r3, r2
+ 80004e0:	005b      	lsls	r3, r3, #1
+ 80004e2:	189b      	adds	r3, r3, r2
+ 80004e4:	00db      	lsls	r3, r3, #3
+ 80004e6:	3308      	adds	r3, #8
+ 80004e8:	001a      	movs	r2, r3
+ 80004ea:	200f      	movs	r0, #15
+ 80004ec:	183b      	adds	r3, r7, r0
+ 80004ee:	781b      	ldrb	r3, [r3, #0]
+ 80004f0:	18d3      	adds	r3, r2, r3
+ 80004f2:	4a1f      	ldr	r2, [pc, #124]	; (8000570 <set_led_color+0x138>)
+ 80004f4:	54d1      	strb	r1, [r2, r3]
+	for (i = 0; i < 8; i++)
+ 80004f6:	183b      	adds	r3, r7, r0
+ 80004f8:	781a      	ldrb	r2, [r3, #0]
+ 80004fa:	183b      	adds	r3, r7, r0
+ 80004fc:	3201      	adds	r2, #1
+ 80004fe:	701a      	strb	r2, [r3, #0]
+ 8000500:	220f      	movs	r2, #15
+ 8000502:	18bb      	adds	r3, r7, r2
+ 8000504:	781b      	ldrb	r3, [r3, #0]
+ 8000506:	2b07      	cmp	r3, #7
+ 8000508:	d9d8      	bls.n	80004bc <set_led_color+0x84>
+	for (i=0; i < 8; i++)
+ 800050a:	18bb      	adds	r3, r7, r2
+ 800050c:	2200      	movs	r2, #0
+ 800050e:	701a      	strb	r2, [r3, #0]
+ 8000510:	e021      	b.n	8000556 <set_led_color+0x11e>
+		pwm_values[24*led + 16 + i] = ((b >> (7 - i)) & 1)? 36: 13;
+ 8000512:	1d3b      	adds	r3, r7, #4
+ 8000514:	781a      	ldrb	r2, [r3, #0]
+ 8000516:	230f      	movs	r3, #15
+ 8000518:	18fb      	adds	r3, r7, r3
+ 800051a:	781b      	ldrb	r3, [r3, #0]
+ 800051c:	2107      	movs	r1, #7
+ 800051e:	1acb      	subs	r3, r1, r3
+ 8000520:	411a      	asrs	r2, r3
+ 8000522:	0013      	movs	r3, r2
+ 8000524:	2201      	movs	r2, #1
+ 8000526:	4013      	ands	r3, r2
+ 8000528:	d001      	beq.n	800052e <set_led_color+0xf6>
+ 800052a:	2124      	movs	r1, #36	; 0x24
+ 800052c:	e000      	b.n	8000530 <set_led_color+0xf8>
+ 800052e:	210d      	movs	r1, #13
+ 8000530:	1dfb      	adds	r3, r7, #7
+ 8000532:	781a      	ldrb	r2, [r3, #0]
+ 8000534:	0013      	movs	r3, r2
+ 8000536:	005b      	lsls	r3, r3, #1
+ 8000538:	189b      	adds	r3, r3, r2
+ 800053a:	00db      	lsls	r3, r3, #3
+ 800053c:	3310      	adds	r3, #16
+ 800053e:	001a      	movs	r2, r3
+ 8000540:	200f      	movs	r0, #15
+ 8000542:	183b      	adds	r3, r7, r0
+ 8000544:	781b      	ldrb	r3, [r3, #0]
+ 8000546:	18d3      	adds	r3, r2, r3
+ 8000548:	4a09      	ldr	r2, [pc, #36]	; (8000570 <set_led_color+0x138>)
+ 800054a:	54d1      	strb	r1, [r2, r3]
+	for (i=0; i < 8; i++)
+ 800054c:	183b      	adds	r3, r7, r0
+ 800054e:	781a      	ldrb	r2, [r3, #0]
+ 8000550:	183b      	adds	r3, r7, r0
+ 8000552:	3201      	adds	r2, #1
+ 8000554:	701a      	strb	r2, [r3, #0]
+ 8000556:	230f      	movs	r3, #15
+ 8000558:	18fb      	adds	r3, r7, r3
+ 800055a:	781b      	ldrb	r3, [r3, #0]
+ 800055c:	2b07      	cmp	r3, #7
+ 800055e:	d9d8      	bls.n	8000512 <set_led_color+0xda>
+
+	pwm_values[sizeof(pwm_values) / sizeof(pwm_values[0]) - 1] = 0;
+ 8000560:	4b03      	ldr	r3, [pc, #12]	; (8000570 <set_led_color+0x138>)
+ 8000562:	22c0      	movs	r2, #192	; 0xc0
+ 8000564:	2100      	movs	r1, #0
+ 8000566:	5499      	strb	r1, [r3, r2]
+}
+ 8000568:	46c0      	nop			; (mov r8, r8)
+ 800056a:	46bd      	mov	sp, r7
+ 800056c:	b004      	add	sp, #16
+ 800056e:	bdb0      	pop	{r4, r5, r7, pc}
+ 8000570:	20000024 	.word	0x20000024
+
+08000574 <update_ws2812>:
+
+void update_ws2812(void)
+{
+ 8000574:	b580      	push	{r7, lr}
+ 8000576:	af00      	add	r7, sp, #0
+	// Disable DMA
+	DMA1_Channel4->CCR &= ~DMA_CCR_EN;
+ 8000578:	4b0d      	ldr	r3, [pc, #52]	; (80005b0 <update_ws2812+0x3c>)
+ 800057a:	681a      	ldr	r2, [r3, #0]
+ 800057c:	4b0c      	ldr	r3, [pc, #48]	; (80005b0 <update_ws2812+0x3c>)
+ 800057e:	2101      	movs	r1, #1
+ 8000580:	438a      	bics	r2, r1
+ 8000582:	601a      	str	r2, [r3, #0]
+	// Enable DMA clock
+	RCC->AHBENR |= RCC_AHBENR_DMAEN;
+ 8000584:	4b0b      	ldr	r3, [pc, #44]	; (80005b4 <update_ws2812+0x40>)
+ 8000586:	695a      	ldr	r2, [r3, #20]
+ 8000588:	4b0a      	ldr	r3, [pc, #40]	; (80005b4 <update_ws2812+0x40>)
+ 800058a:	2101      	movs	r1, #1
+ 800058c:	430a      	orrs	r2, r1
+ 800058e:	615a      	str	r2, [r3, #20]
+	// DMA settings
+	DMA1_Channel4->CCR = DMA_CCR_PL_1 | DMA_CCR_PL_0 | DMA_CCR_PSIZE_0 | DMA_CCR_MINC | DMA_CCR_DIR;
+ 8000590:	4b07      	ldr	r3, [pc, #28]	; (80005b0 <update_ws2812+0x3c>)
+ 8000592:	4a09      	ldr	r2, [pc, #36]	; (80005b8 <update_ws2812+0x44>)
+ 8000594:	601a      	str	r2, [r3, #0]
+	//Target
+	DMA1_Channel4->CPAR = (uint32_t)&TIM3->CCR1;
+ 8000596:	4b06      	ldr	r3, [pc, #24]	; (80005b0 <update_ws2812+0x3c>)
+ 8000598:	4a08      	ldr	r2, [pc, #32]	; (80005bc <update_ws2812+0x48>)
+ 800059a:	609a      	str	r2, [r3, #8]
+	//Source
+	DMA1_Channel4->CMAR = (uint32_t)pwm_values;
+ 800059c:	4b04      	ldr	r3, [pc, #16]	; (80005b0 <update_ws2812+0x3c>)
+ 800059e:	4a08      	ldr	r2, [pc, #32]	; (80005c0 <update_ws2812+0x4c>)
+ 80005a0:	60da      	str	r2, [r3, #12]
+	// Number of transfer
+	DMA1_Channel4->CCR = DMA_CCR_EN;
+ 80005a2:	4b03      	ldr	r3, [pc, #12]	; (80005b0 <update_ws2812+0x3c>)
+ 80005a4:	2201      	movs	r2, #1
+ 80005a6:	601a      	str	r2, [r3, #0]
+}
+ 80005a8:	46c0      	nop			; (mov r8, r8)
+ 80005aa:	46bd      	mov	sp, r7
+ 80005ac:	bd80      	pop	{r7, pc}
+ 80005ae:	46c0      	nop			; (mov r8, r8)
+ 80005b0:	40020044 	.word	0x40020044
+ 80005b4:	40021000 	.word	0x40021000
+ 80005b8:	00003190 	.word	0x00003190
+ 80005bc:	40000434 	.word	0x40000434
+ 80005c0:	20000024 	.word	0x20000024
+
+080005c4 <SysTick_Handler>:
+
 
 //функция,включающая прерывания позволяющая делать простые задержки
 void SysTick_Handler(void)
 {
- 8000438:	b580      	push	{r7, lr}
- 800043a:	af00      	add	r7, sp, #0
+ 80005c4:	b580      	push	{r7, lr}
+ 80005c6:	af00      	add	r7, sp, #0
 	time++;
- 800043c:	4b03      	ldr	r3, [pc, #12]	; (800044c <SysTick_Handler+0x14>)
- 800043e:	681b      	ldr	r3, [r3, #0]
- 8000440:	1c5a      	adds	r2, r3, #1
- 8000442:	4b02      	ldr	r3, [pc, #8]	; (800044c <SysTick_Handler+0x14>)
- 8000444:	601a      	str	r2, [r3, #0]
+ 80005c8:	4b03      	ldr	r3, [pc, #12]	; (80005d8 <SysTick_Handler+0x14>)
+ 80005ca:	681b      	ldr	r3, [r3, #0]
+ 80005cc:	1c5a      	adds	r2, r3, #1
+ 80005ce:	4b02      	ldr	r3, [pc, #8]	; (80005d8 <SysTick_Handler+0x14>)
+ 80005d0:	601a      	str	r2, [r3, #0]
 }
- 8000446:	46c0      	nop			; (mov r8, r8)
- 8000448:	46bd      	mov	sp, r7
- 800044a:	bd80      	pop	{r7, pc}
- 800044c:	20000020 	.word	0x20000020
-
-08000450 <set_led_color>:
-
-void set_led_color(uint8_t led, uint8_t r, uint8_t g, uint8_t b)
-{
- 8000450:	b5b0      	push	{r4, r5, r7, lr}
- 8000452:	b084      	sub	sp, #16
- 8000454:	af00      	add	r7, sp, #0
- 8000456:	0005      	movs	r5, r0
- 8000458:	000c      	movs	r4, r1
- 800045a:	0010      	movs	r0, r2
- 800045c:	0019      	movs	r1, r3
- 800045e:	1dfb      	adds	r3, r7, #7
- 8000460:	1c2a      	adds	r2, r5, #0
- 8000462:	701a      	strb	r2, [r3, #0]
- 8000464:	1dbb      	adds	r3, r7, #6
- 8000466:	1c22      	adds	r2, r4, #0
- 8000468:	701a      	strb	r2, [r3, #0]
- 800046a:	1d7b      	adds	r3, r7, #5
- 800046c:	1c02      	adds	r2, r0, #0
- 800046e:	701a      	strb	r2, [r3, #0]
- 8000470:	1d3b      	adds	r3, r7, #4
- 8000472:	1c0a      	adds	r2, r1, #0
- 8000474:	701a      	strb	r2, [r3, #0]
-	uint8_t i;
-	for (i = 0; i < 8; i++)
- 8000476:	230f      	movs	r3, #15
- 8000478:	18fb      	adds	r3, r7, r3
- 800047a:	2200      	movs	r2, #0
- 800047c:	701a      	strb	r2, [r3, #0]
- 800047e:	e020      	b.n	80004c2 <set_led_color+0x72>
-		pwm_values[24*led + i] = ((r >> (7 - i)) & 1)? 36: 12;
- 8000480:	1dbb      	adds	r3, r7, #6
- 8000482:	781a      	ldrb	r2, [r3, #0]
- 8000484:	230f      	movs	r3, #15
- 8000486:	18fb      	adds	r3, r7, r3
- 8000488:	781b      	ldrb	r3, [r3, #0]
- 800048a:	2107      	movs	r1, #7
- 800048c:	1acb      	subs	r3, r1, r3
- 800048e:	411a      	asrs	r2, r3
- 8000490:	0013      	movs	r3, r2
- 8000492:	2201      	movs	r2, #1
- 8000494:	4013      	ands	r3, r2
- 8000496:	d001      	beq.n	800049c <set_led_color+0x4c>
- 8000498:	2124      	movs	r1, #36	; 0x24
- 800049a:	e000      	b.n	800049e <set_led_color+0x4e>
- 800049c:	210c      	movs	r1, #12
- 800049e:	1dfb      	adds	r3, r7, #7
- 80004a0:	781a      	ldrb	r2, [r3, #0]
- 80004a2:	0013      	movs	r3, r2
- 80004a4:	005b      	lsls	r3, r3, #1
- 80004a6:	189b      	adds	r3, r3, r2
- 80004a8:	00db      	lsls	r3, r3, #3
- 80004aa:	001a      	movs	r2, r3
- 80004ac:	200f      	movs	r0, #15
- 80004ae:	183b      	adds	r3, r7, r0
- 80004b0:	781b      	ldrb	r3, [r3, #0]
- 80004b2:	18d3      	adds	r3, r2, r3
- 80004b4:	4a34      	ldr	r2, [pc, #208]	; (8000588 <set_led_color+0x138>)
- 80004b6:	54d1      	strb	r1, [r2, r3]
-	for (i = 0; i < 8; i++)
- 80004b8:	183b      	adds	r3, r7, r0
- 80004ba:	781a      	ldrb	r2, [r3, #0]
- 80004bc:	183b      	adds	r3, r7, r0
- 80004be:	3201      	adds	r2, #1
- 80004c0:	701a      	strb	r2, [r3, #0]
- 80004c2:	220f      	movs	r2, #15
- 80004c4:	18bb      	adds	r3, r7, r2
- 80004c6:	781b      	ldrb	r3, [r3, #0]
- 80004c8:	2b07      	cmp	r3, #7
- 80004ca:	d9d9      	bls.n	8000480 <set_led_color+0x30>
-	for (i = 0; i < 8; i++)
- 80004cc:	18bb      	adds	r3, r7, r2
- 80004ce:	2200      	movs	r2, #0
- 80004d0:	701a      	strb	r2, [r3, #0]
- 80004d2:	e021      	b.n	8000518 <set_led_color+0xc8>
-		pwm_values[24*led + 8 + i] = ((g >> (7 - i)) & 1)? 36: 12;
- 80004d4:	1d7b      	adds	r3, r7, #5
- 80004d6:	781a      	ldrb	r2, [r3, #0]
- 80004d8:	230f      	movs	r3, #15
- 80004da:	18fb      	adds	r3, r7, r3
- 80004dc:	781b      	ldrb	r3, [r3, #0]
- 80004de:	2107      	movs	r1, #7
- 80004e0:	1acb      	subs	r3, r1, r3
- 80004e2:	411a      	asrs	r2, r3
- 80004e4:	0013      	movs	r3, r2
- 80004e6:	2201      	movs	r2, #1
- 80004e8:	4013      	ands	r3, r2
- 80004ea:	d001      	beq.n	80004f0 <set_led_color+0xa0>
- 80004ec:	2124      	movs	r1, #36	; 0x24
- 80004ee:	e000      	b.n	80004f2 <set_led_color+0xa2>
- 80004f0:	210c      	movs	r1, #12
- 80004f2:	1dfb      	adds	r3, r7, #7
- 80004f4:	781a      	ldrb	r2, [r3, #0]
- 80004f6:	0013      	movs	r3, r2
- 80004f8:	005b      	lsls	r3, r3, #1
- 80004fa:	189b      	adds	r3, r3, r2
- 80004fc:	00db      	lsls	r3, r3, #3
- 80004fe:	3308      	adds	r3, #8
- 8000500:	001a      	movs	r2, r3
- 8000502:	200f      	movs	r0, #15
- 8000504:	183b      	adds	r3, r7, r0
- 8000506:	781b      	ldrb	r3, [r3, #0]
- 8000508:	18d3      	adds	r3, r2, r3
- 800050a:	4a1f      	ldr	r2, [pc, #124]	; (8000588 <set_led_color+0x138>)
- 800050c:	54d1      	strb	r1, [r2, r3]
-	for (i = 0; i < 8; i++)
- 800050e:	183b      	adds	r3, r7, r0
- 8000510:	781a      	ldrb	r2, [r3, #0]
- 8000512:	183b      	adds	r3, r7, r0
- 8000514:	3201      	adds	r2, #1
- 8000516:	701a      	strb	r2, [r3, #0]
- 8000518:	220f      	movs	r2, #15
- 800051a:	18bb      	adds	r3, r7, r2
- 800051c:	781b      	ldrb	r3, [r3, #0]
- 800051e:	2b07      	cmp	r3, #7
- 8000520:	d9d8      	bls.n	80004d4 <set_led_color+0x84>
-	for (i=0; i < 8; i++)
- 8000522:	18bb      	adds	r3, r7, r2
- 8000524:	2200      	movs	r2, #0
- 8000526:	701a      	strb	r2, [r3, #0]
- 8000528:	e021      	b.n	800056e <set_led_color+0x11e>
-		pwm_values[24*led + 16 + i] = ((b >> (7 - i)) & 1)? 36: 12;
- 800052a:	1d3b      	adds	r3, r7, #4
- 800052c:	781a      	ldrb	r2, [r3, #0]
- 800052e:	230f      	movs	r3, #15
- 8000530:	18fb      	adds	r3, r7, r3
- 8000532:	781b      	ldrb	r3, [r3, #0]
- 8000534:	2107      	movs	r1, #7
- 8000536:	1acb      	subs	r3, r1, r3
- 8000538:	411a      	asrs	r2, r3
- 800053a:	0013      	movs	r3, r2
- 800053c:	2201      	movs	r2, #1
- 800053e:	4013      	ands	r3, r2
- 8000540:	d001      	beq.n	8000546 <set_led_color+0xf6>
- 8000542:	2124      	movs	r1, #36	; 0x24
- 8000544:	e000      	b.n	8000548 <set_led_color+0xf8>
- 8000546:	210c      	movs	r1, #12
- 8000548:	1dfb      	adds	r3, r7, #7
- 800054a:	781a      	ldrb	r2, [r3, #0]
- 800054c:	0013      	movs	r3, r2
- 800054e:	005b      	lsls	r3, r3, #1
- 8000550:	189b      	adds	r3, r3, r2
- 8000552:	00db      	lsls	r3, r3, #3
- 8000554:	3310      	adds	r3, #16
- 8000556:	001a      	movs	r2, r3
- 8000558:	200f      	movs	r0, #15
- 800055a:	183b      	adds	r3, r7, r0
- 800055c:	781b      	ldrb	r3, [r3, #0]
- 800055e:	18d3      	adds	r3, r2, r3
- 8000560:	4a09      	ldr	r2, [pc, #36]	; (8000588 <set_led_color+0x138>)
- 8000562:	54d1      	strb	r1, [r2, r3]
-	for (i=0; i < 8; i++)
- 8000564:	183b      	adds	r3, r7, r0
- 8000566:	781a      	ldrb	r2, [r3, #0]
- 8000568:	183b      	adds	r3, r7, r0
- 800056a:	3201      	adds	r2, #1
- 800056c:	701a      	strb	r2, [r3, #0]
- 800056e:	230f      	movs	r3, #15
- 8000570:	18fb      	adds	r3, r7, r3
- 8000572:	781b      	ldrb	r3, [r3, #0]
- 8000574:	2b07      	cmp	r3, #7
- 8000576:	d9d8      	bls.n	800052a <set_led_color+0xda>
-
-	pwm_values[sizeof(pwm_values) / sizeof(pwm_values[0]) - 1] = 0;
- 8000578:	4b03      	ldr	r3, [pc, #12]	; (8000588 <set_led_color+0x138>)
- 800057a:	2248      	movs	r2, #72	; 0x48
- 800057c:	2100      	movs	r1, #0
- 800057e:	5499      	strb	r1, [r3, r2]
-}
- 8000580:	46c0      	nop			; (mov r8, r8)
- 8000582:	46bd      	mov	sp, r7
- 8000584:	b004      	add	sp, #16
- 8000586:	bdb0      	pop	{r4, r5, r7, pc}
- 8000588:	20000024 	.word	0x20000024
-
-0800058c <update_ws2812>:
-
-void update_ws2812(void)
-{
- 800058c:	b580      	push	{r7, lr}
- 800058e:	af00      	add	r7, sp, #0
-	// Disable DMA
-	DMA1_Channel4->CCR &= ~DMA_CCR_EN;
- 8000590:	4b0d      	ldr	r3, [pc, #52]	; (80005c8 <update_ws2812+0x3c>)
- 8000592:	681a      	ldr	r2, [r3, #0]
- 8000594:	4b0c      	ldr	r3, [pc, #48]	; (80005c8 <update_ws2812+0x3c>)
- 8000596:	2101      	movs	r1, #1
- 8000598:	438a      	bics	r2, r1
- 800059a:	601a      	str	r2, [r3, #0]
-	// Enable DMA clock
-	RCC->AHBENR |= RCC_AHBENR_DMAEN;
- 800059c:	4b0b      	ldr	r3, [pc, #44]	; (80005cc <update_ws2812+0x40>)
- 800059e:	695a      	ldr	r2, [r3, #20]
- 80005a0:	4b0a      	ldr	r3, [pc, #40]	; (80005cc <update_ws2812+0x40>)
- 80005a2:	2101      	movs	r1, #1
- 80005a4:	430a      	orrs	r2, r1
- 80005a6:	615a      	str	r2, [r3, #20]
-	// DMA settings
-	DMA1_Channel4->CCR = DMA_CCR_PL_1 | DMA_CCR_PL_0 | DMA_CCR_PSIZE_0 | DMA_CCR_MINC | DMA_CCR_DIR;
- 80005a8:	4b07      	ldr	r3, [pc, #28]	; (80005c8 <update_ws2812+0x3c>)
- 80005aa:	4a09      	ldr	r2, [pc, #36]	; (80005d0 <update_ws2812+0x44>)
- 80005ac:	601a      	str	r2, [r3, #0]
-	//Target
-	DMA1_Channel4->CPAR = (uint32_t)&TIM3->CCR1;
- 80005ae:	4b06      	ldr	r3, [pc, #24]	; (80005c8 <update_ws2812+0x3c>)
- 80005b0:	4a08      	ldr	r2, [pc, #32]	; (80005d4 <update_ws2812+0x48>)
- 80005b2:	609a      	str	r2, [r3, #8]
-	//Source
-	DMA1_Channel4->CMAR = (uint32_t)pwm_values;
- 80005b4:	4b04      	ldr	r3, [pc, #16]	; (80005c8 <update_ws2812+0x3c>)
- 80005b6:	4a08      	ldr	r2, [pc, #32]	; (80005d8 <update_ws2812+0x4c>)
- 80005b8:	60da      	str	r2, [r3, #12]
-	// Number of transfer
-	DMA1_Channel4->CCR = DMA_CCR_EN;
- 80005ba:	4b03      	ldr	r3, [pc, #12]	; (80005c8 <update_ws2812+0x3c>)
- 80005bc:	2201      	movs	r2, #1
- 80005be:	601a      	str	r2, [r3, #0]
-}
- 80005c0:	46c0      	nop			; (mov r8, r8)
- 80005c2:	46bd      	mov	sp, r7
- 80005c4:	bd80      	pop	{r7, pc}
- 80005c6:	46c0      	nop			; (mov r8, r8)
- 80005c8:	40020044 	.word	0x40020044
- 80005cc:	40021000 	.word	0x40021000
- 80005d0:	00003190 	.word	0x00003190
- 80005d4:	40000434 	.word	0x40000434
- 80005d8:	20000024 	.word	0x20000024
+ 80005d2:	46c0      	nop			; (mov r8, r8)
+ 80005d4:	46bd      	mov	sp, r7
+ 80005d6:	bd80      	pop	{r7, pc}
+ 80005d8:	20000020 	.word	0x20000020
 
 080005dc <main>:
-
-
-
 
 int main(void)
 {
@@ -856,7 +855,7 @@ int main(void)
 	SystemInit();
  80005e0:	f7ff fe1e 	bl	8000220 <SystemInit>
 
-	//x12
+	//x12 множитель для 48MHz
 	RCC->CFGR &= ~(RCC_CFGR_PLLMUL_2 | RCC_CFGR_PLLMUL_0);
  80005e4:	4b79      	ldr	r3, [pc, #484]	; (80007cc <main+0x1f0>)
  80005e6:	685a      	ldr	r2, [r3, #4]
@@ -891,7 +890,7 @@ int main(void)
  8000616:	4013      	ands	r3, r2
  8000618:	d0f9      	beq.n	800060e <main+0x32>
 
-	// Select PPL as main clock
+	// Select PLL as main clock
 	RCC->CFGR &= ~RCC_CFGR_SW_0;
  800061a:	4b6c      	ldr	r3, [pc, #432]	; (80007cc <main+0x1f0>)
  800061c:	685a      	ldr	r2, [r3, #4]
@@ -938,8 +937,7 @@ int main(void)
  800065e:	4b5e      	ldr	r3, [pc, #376]	; (80007d8 <main+0x1fc>)
  8000660:	2230      	movs	r2, #48	; 0x30
  8000662:	62da      	str	r2, [r3, #44]	; 0x2c
-	//На линии ос1реф записываем биты для включения шим на первом канале
-
+	//На линии ос1реф, из которой сигнал идет на 1 канал записываем биты для включения шим на первом канале
 	TIM3->CCMR1 |= TIM_CCMR1_OC1M_2 | TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1PE;
  8000664:	4b5c      	ldr	r3, [pc, #368]	; (80007d8 <main+0x1fc>)
  8000666:	699a      	ldr	r2, [r3, #24]
@@ -947,7 +945,7 @@ int main(void)
  800066a:	2168      	movs	r1, #104	; 0x68
  800066c:	430a      	orrs	r2, r1
  800066e:	619a      	str	r2, [r3, #24]
-	// 1 КАНАЛ
+	//Turn on 1 channel
 	TIM3->CCER |= TIM_CCER_CC1E;
  8000670:	4b59      	ldr	r3, [pc, #356]	; (80007d8 <main+0x1fc>)
  8000672:	6a1a      	ldr	r2, [r3, #32]
@@ -1030,21 +1028,21 @@ int main(void)
  80006dc:	22ff      	movs	r2, #255	; 0xff
  80006de:	21ff      	movs	r1, #255	; 0xff
  80006e0:	2000      	movs	r0, #0
- 80006e2:	f7ff feb5 	bl	8000450 <set_led_color>
+ 80006e2:	f7ff fea9 	bl	8000438 <set_led_color>
 	   set_led_color(0, 0xFF, 0xFF, 0xFF);
  80006e6:	23ff      	movs	r3, #255	; 0xff
  80006e8:	22ff      	movs	r2, #255	; 0xff
  80006ea:	21ff      	movs	r1, #255	; 0xff
  80006ec:	2000      	movs	r0, #0
- 80006ee:	f7ff feaf 	bl	8000450 <set_led_color>
+ 80006ee:	f7ff fea3 	bl	8000438 <set_led_color>
 	   set_led_color(2, 0, 0, 0xFF);
  80006f2:	23ff      	movs	r3, #255	; 0xff
  80006f4:	2200      	movs	r2, #0
  80006f6:	2100      	movs	r1, #0
  80006f8:	2002      	movs	r0, #2
- 80006fa:	f7ff fea9 	bl	8000450 <set_led_color>
+ 80006fa:	f7ff fe9d 	bl	8000438 <set_led_color>
 	   update_ws2812();
- 80006fe:	f7ff ff45 	bl	800058c <update_ws2812>
+ 80006fe:	f7ff ff39 	bl	8000574 <update_ws2812>
 	   time = 0;
  8000702:	4b36      	ldr	r3, [pc, #216]	; (80007dc <main+0x200>)
  8000704:	2200      	movs	r2, #0
@@ -1063,21 +1061,21 @@ int main(void)
  8000718:	2200      	movs	r2, #0
  800071a:	21ff      	movs	r1, #255	; 0xff
  800071c:	2000      	movs	r0, #0
- 800071e:	f7ff fe97 	bl	8000450 <set_led_color>
+ 800071e:	f7ff fe8b 	bl	8000438 <set_led_color>
 	   set_led_color(1, 0, 0xFF, 0);
  8000722:	2300      	movs	r3, #0
  8000724:	22ff      	movs	r2, #255	; 0xff
  8000726:	2100      	movs	r1, #0
  8000728:	2001      	movs	r0, #1
- 800072a:	f7ff fe91 	bl	8000450 <set_led_color>
+ 800072a:	f7ff fe85 	bl	8000438 <set_led_color>
 	   set_led_color(2, 0, 0, 0xFF);
  800072e:	23ff      	movs	r3, #255	; 0xff
  8000730:	2200      	movs	r2, #0
  8000732:	2100      	movs	r1, #0
  8000734:	2002      	movs	r0, #2
- 8000736:	f7ff fe8b 	bl	8000450 <set_led_color>
+ 8000736:	f7ff fe7f 	bl	8000438 <set_led_color>
 	   update_ws2812();
- 800073a:	f7ff ff27 	bl	800058c <update_ws2812>
+ 800073a:	f7ff ff1b 	bl	8000574 <update_ws2812>
 	   time = 0;
  800073e:	4b27      	ldr	r3, [pc, #156]	; (80007dc <main+0x200>)
  8000740:	2200      	movs	r2, #0
@@ -1096,21 +1094,21 @@ int main(void)
  8000754:	2200      	movs	r2, #0
  8000756:	21ff      	movs	r1, #255	; 0xff
  8000758:	2001      	movs	r0, #1
- 800075a:	f7ff fe79 	bl	8000450 <set_led_color>
+ 800075a:	f7ff fe6d 	bl	8000438 <set_led_color>
 	   set_led_color(2, 0, 0xFF, 0);
  800075e:	2300      	movs	r3, #0
  8000760:	22ff      	movs	r2, #255	; 0xff
  8000762:	2100      	movs	r1, #0
  8000764:	2002      	movs	r0, #2
- 8000766:	f7ff fe73 	bl	8000450 <set_led_color>
+ 8000766:	f7ff fe67 	bl	8000438 <set_led_color>
 	   set_led_color(0, 0, 0, 0xFF);
  800076a:	23ff      	movs	r3, #255	; 0xff
  800076c:	2200      	movs	r2, #0
  800076e:	2100      	movs	r1, #0
  8000770:	2000      	movs	r0, #0
- 8000772:	f7ff fe6d 	bl	8000450 <set_led_color>
+ 8000772:	f7ff fe61 	bl	8000438 <set_led_color>
 	   update_ws2812();
- 8000776:	f7ff ff09 	bl	800058c <update_ws2812>
+ 8000776:	f7ff fefd 	bl	8000574 <update_ws2812>
 	   time = 0;
  800077a:	4b18      	ldr	r3, [pc, #96]	; (80007dc <main+0x200>)
  800077c:	2200      	movs	r2, #0
@@ -1130,21 +1128,21 @@ int main(void)
  8000790:	2200      	movs	r2, #0
  8000792:	21ff      	movs	r1, #255	; 0xff
  8000794:	2002      	movs	r0, #2
- 8000796:	f7ff fe5b 	bl	8000450 <set_led_color>
+ 8000796:	f7ff fe4f 	bl	8000438 <set_led_color>
 	   set_led_color(0, 0, 0xFF, 0);
  800079a:	2300      	movs	r3, #0
  800079c:	22ff      	movs	r2, #255	; 0xff
  800079e:	2100      	movs	r1, #0
  80007a0:	2000      	movs	r0, #0
- 80007a2:	f7ff fe55 	bl	8000450 <set_led_color>
+ 80007a2:	f7ff fe49 	bl	8000438 <set_led_color>
 	   set_led_color(1, 0, 0, 0xFF);
  80007a6:	23ff      	movs	r3, #255	; 0xff
  80007a8:	2200      	movs	r2, #0
  80007aa:	2100      	movs	r1, #0
  80007ac:	2001      	movs	r0, #1
- 80007ae:	f7ff fe4f 	bl	8000450 <set_led_color>
+ 80007ae:	f7ff fe43 	bl	8000438 <set_led_color>
 	   update_ws2812();
- 80007b2:	f7ff feeb 	bl	800058c <update_ws2812>
+ 80007b2:	f7ff fedf 	bl	8000574 <update_ws2812>
 	   time = 0;
  80007b6:	4b09      	ldr	r3, [pc, #36]	; (80007dc <main+0x200>)
  80007b8:	2200      	movs	r2, #0
@@ -1260,7 +1258,7 @@ LoopForever:
   ldr r2, =_sbss
  8000828:	20000004 	.word	0x20000004
   ldr r4, =_ebss
- 800082c:	20000070 	.word	0x20000070
+ 800082c:	200000e8 	.word	0x200000e8
 
 08000830 <ADC_IRQHandler>:
  * @retval : None
